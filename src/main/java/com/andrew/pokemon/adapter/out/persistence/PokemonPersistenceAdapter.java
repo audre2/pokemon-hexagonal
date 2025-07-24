@@ -2,19 +2,18 @@ package com.andrew.pokemon.adapter.out.persistence;
 
 import com.andrew.pokemon.application.port.out.PokemonRepositoryPort;
 import com.andrew.pokemon.domain.Pokemon;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class PokemonPersistenceAdapter implements PokemonRepositoryPort {
 
     private final JpaPokemonRepository repository;
-
-    public PokemonPersistenceAdapter(JpaPokemonRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Pokemon save(Pokemon pokemon) {

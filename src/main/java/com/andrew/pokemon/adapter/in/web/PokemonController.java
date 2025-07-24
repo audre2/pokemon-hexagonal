@@ -3,6 +3,9 @@ package com.andrew.pokemon.adapter.in.web;
 import com.andrew.pokemon.adapter.in.web.dto.PokemonRequestDTO;
 import com.andrew.pokemon.adapter.in.web.dto.PokemonResponseDTO;
 import com.andrew.pokemon.application.port.in.PokemonUseCase;
+import com.andrew.pokemon.application.port.in.PublishPokemonUseCase;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +16,23 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pokemon")
+@RequiredArgsConstructor
+@Slf4j
 public class PokemonController {
 
     private final PokemonUseCase service;
-
-    public PokemonController(PokemonUseCase service) {
-        this.service = service;
-    }
+    private final PublishPokemonUseCase publishPokemonUseCase;
 
     @PostMapping
     public ResponseEntity<PokemonResponseDTO> create(@RequestBody PokemonRequestDTO dto) {
         return ResponseEntity.ok(new PokemonResponseDTO(service.create(dto.toDomain())));
+    }
+
+    @PostMapping("/async")
+    public ResponseEntity<String> saveAsync(@RequestBody PokemonRequestDTO dto) {
+        log.info("Received async request for Pokemon: {}", dto.getName());
+        publishPokemonUseCase.publishAsync(dto.toDomain());
+        return ResponseEntity.accepted().body("Pokemon enviado para Pub/Sub");
     }
 
     @GetMapping

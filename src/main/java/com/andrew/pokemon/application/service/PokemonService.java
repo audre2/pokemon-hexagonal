@@ -4,23 +4,26 @@ import com.andrew.pokemon.application.port.in.PokemonUseCase;
 import com.andrew.pokemon.application.port.out.PokemonRepositoryPort;
 import com.andrew.pokemon.domain.Pokemon;
 import com.andrew.pokemon.exception.PokemonNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class PokemonService implements PokemonUseCase {
 
     private final PokemonRepositoryPort repository;
 
-    public PokemonService(PokemonRepositoryPort repository) {
-        this.repository = repository;
-    }
-
     @Override
     public Pokemon create(Pokemon pokemon) {
-        return repository.save(pokemon);
+        log.info("Creating Pokemon: {}", pokemon.getName());
+        Pokemon saved = repository.save(pokemon);
+        log.info("Pokemon saved with ID: {}", saved.getId());
+        return saved;
     }
 
     @Override
